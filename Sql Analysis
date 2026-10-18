@@ -1,0 +1,189 @@
+-- STEP 1: CREATE TABLES
+CREATE TABLE Patients (
+    PatientID INT PRIMARY KEY,
+    PatientName VARCHAR(100),
+    Gender VARCHAR(10),
+    DateOfBirth DATE,
+    City VARCHAR(50),
+    InsuranceType VARCHAR(50) NULL,
+    RegistrationDate DATE
+);
+
+CREATE TABLE Doctors (
+    DoctorID INT PRIMARY KEY,
+    DoctorName VARCHAR(100),
+    Specialization VARCHAR(50),
+    Department VARCHAR(50),
+    ExperienceYears INT
+);
+
+CREATE TABLE Admissions (
+    AdmissionID INT PRIMARY KEY,
+    PatientID INT FOREIGN KEY REFERENCES Patients(PatientID),
+    DoctorID INT FOREIGN KEY REFERENCES Doctors(DoctorID),
+    AdmissionDate DATE,
+    DischargeDate DATE,
+    AdmissionType VARCHAR(20),
+    Diagnosis VARCHAR(100),
+    TreatmentCost DECIMAL(10, 2),
+    ReadmittedWithin30Days BIT
+);
+
+-- STEP 2: INSERT DATA
+
+-- Insert 15 Patients (Including some with no insurance, and some who will never be admitted)
+INSERT INTO Patients (PatientID, PatientName, Gender, DateOfBirth, City, InsuranceType, RegistrationDate) VALUES
+(1, 'Alice Smith', 'Female', '1985-04-12', 'New York', 'BlueCross', '2023-01-15'),
+(2, 'Bob Johnson', 'Male', '1972-08-25', 'Chicago', 'Medicare', '2023-02-20'),
+(3, 'Charlie Brown', 'Male', '1990-11-05', 'Boston', 'Aetna', '2023-03-10'),
+(4, 'Diana Prince', 'Female', '1988-02-28', 'New York', 'Cigna', '2023-05-12'),
+(5, 'Evan Wright', 'Male', '1965-07-14', 'Chicago', NULL, '2023-06-22'),
+(6, 'Fiona Gallagher', 'Female', '1995-09-09', 'Boston', 'BlueCross', '2023-08-05'),
+(7, 'George Costanza', 'Male', '1959-12-18', 'New York', 'Medicare', '2023-09-15'),
+(8, 'Hannah Abbott', 'Female', '2001-03-21', 'Seattle', 'Aetna', '2023-11-01'),
+(9, 'Ian Malcolm', 'Male', '1970-05-30', 'Chicago', 'Cigna', '2024-01-10'),
+(10, 'Julia Roberts', 'Female', '1982-10-10', 'Boston', NULL, '2024-02-14'),
+(11, 'Kevin Hart', 'Male', '1979-06-06', 'Seattle', 'BlueCross', '2024-03-20'),
+(12, 'Laura Dern', 'Female', '1967-01-15', 'New York', 'Medicare', '2024-04-25'),
+(13, 'Michael Scott', 'Male', '1964-08-16', 'Chicago', 'Aetna', '2024-05-30'),
+(14, 'Nancy Drew', 'Female', '1998-11-22', 'Seattle', 'Cigna', '2024-06-15'), -- Never admitted
+(15, 'Oscar Martinez', 'Male', '1980-02-19', 'Boston', 'BlueCross', '2024-07-20'); -- Never admitted
+
+-- Insert 6 Doctors (Including one who will never treat a patient in this dataset)
+INSERT INTO Doctors (DoctorID, DoctorName, Specialization, Department, ExperienceYears) VALUES
+(1, 'Dr. Gregory House', 'Diagnostician', 'Internal Medicine', 20),
+(2, 'Dr. Meredith Grey', 'General Surgery', 'Surgery', 12),
+(3, 'Dr. John Carter', 'Emergency Medicine', 'Emergency', 15),
+(4, 'Dr. Cristina Yang', 'Cardiothoracic Surgery', 'Surgery', 14),
+(5, 'Dr. Allison Cameron', 'Immunology', 'Internal Medicine', 10),
+(6, 'Dr. Stephen Strange', 'Neurosurgery', 'Surgery', 8); -- Never treats a patient in this dataset
+
+-- Insert 40 Admissions (Reusing patients and doctors, varying costs and types)
+INSERT INTO Admissions (AdmissionID, PatientID, DoctorID, AdmissionDate, DischargeDate, AdmissionType, Diagnosis, TreatmentCost, ReadmittedWithin30Days) VALUES
+(1, 1, 3, '2024-01-05', '2024-01-06', 'Emergency', 'Fractured Arm', 2500.00, 0),
+(2, 2, 1, '2024-01-10', '2024-01-15', 'Elective', 'Pneumonia', 5400.00, 1),
+(3, 2, 5, '2024-02-02', '2024-02-05', 'Emergency', 'Severe Asthma', 3200.00, 0),
+(4, 3, 2, '2024-02-10', '2024-02-12', 'Elective', 'Appendicitis', 8500.00, 0),
+(5, 4, 1, '2024-02-15', '2024-02-20', 'OPD', 'Migraine', 450.00, 0),
+(6, 5, 3, '2024-02-20', '2024-02-21', 'Emergency', 'Laceration', 1200.00, 0),
+(7, 6, 4, '2024-03-01', '2024-03-10', 'Elective', 'Heart Bypass', 45000.00, 0),
+(8, 7, 1, '2024-03-05', '2024-03-08', 'OPD', 'Hypertension', 600.00, 1),
+(9, 7, 1, '2024-03-25', '2024-03-26', 'Emergency', 'Hypertensive Crisis', 2100.00, 0),
+(10, 8, 5, '2024-04-02', '2024-04-03', 'OPD', 'Allergic Reaction', 350.00, 0),
+(11, 9, 2, '2024-04-10', '2024-04-12', 'Elective', 'Gallbladder Removal', 9200.00, 0),
+(12, 10, 3, '2024-04-15', '2024-04-15', 'Emergency', 'Concussion', 1800.00, 0),
+(13, 11, 4, '2024-05-01', '2024-05-05', 'Elective', 'Valve Replacement', 38000.00, 0),
+(14, 12, 1, '2024-05-10', '2024-05-14', 'OPD', 'Diabetes Management', 800.00, 0),
+(15, 13, 2, '2024-05-20', '2024-05-22', 'Elective', 'Hernia Repair', 6500.00, 1),
+(16, 13, 3, '2024-06-15', '2024-06-16', 'Emergency', 'Post-op Infection', 3400.00, 0),
+(17, 1, 1, '2024-06-20', '2024-06-21', 'OPD', 'Routine Checkup', 250.00, 0),
+(18, 2, 4, '2024-07-01', '2024-07-07', 'Emergency', 'Heart Attack', 52000.00, 0),
+(19, 3, 5, '2024-07-10', '2024-07-12', 'OPD', 'Immune Deficiency', 1100.00, 0),
+(20, 4, 3, '2024-07-15', '2024-07-16', 'Emergency', 'Food Poisoning', 1500.00, 0),
+(21, 5, 2, '2024-08-01', '2024-08-04', 'Elective', 'Knee Surgery', 12000.00, 0),
+(22, 6, 1, '2024-08-10', '2024-08-11', 'OPD', 'Flu', 300.00, 0),
+(23, 7, 3, '2024-08-15', '2024-08-20', 'Emergency', 'Pneumonia', 5400.00, 1),
+(24, 7, 5, '2024-09-10', '2024-09-14', 'Emergency', 'Secondary Infection', 4100.00, 0),
+(25, 8, 2, '2024-09-15', '2024-09-16', 'OPD', 'Minor Burn', 400.00, 0),
+(26, 9, 1, '2024-09-20', '2024-09-22', 'Elective', 'Endoscopy', 2200.00, 0),
+(27, 10, 4, '2024-10-01', '2024-10-05', 'Emergency', 'Arrhythmia', 8900.00, 0),
+(28, 11, 5, '2024-10-10', '2024-10-11', 'OPD', 'Asthma Follow-up', 450.00, 0),
+(29, 12, 2, '2024-10-15', '2024-10-18', 'Elective', 'Thyroidectomy', 7500.00, 0),
+(30, 13, 1, '2024-11-01', '2024-11-03', 'OPD', 'Back Pain', 600.00, 0),
+(31, 1, 2, '2024-11-10', '2024-11-12', 'Elective', 'Cataract Surgery', 3100.00, 0),
+(32, 2, 3, '2024-11-15', '2024-11-16', 'Emergency', 'Sprained Ankle', 950.00, 0),
+(33, 3, 1, '2024-11-20', '2024-11-21', 'OPD', 'Viral Fever', 300.00, 0),
+(34, 4, 5, '2024-12-01', '2024-12-03', 'Elective', 'Allergy Testing', 1200.00, 0),
+(35, 5, 4, '2024-12-05', '2024-12-10', 'Emergency', 'Chest Pain', 15000.00, 1),
+(36, 5, 4, '2024-12-28', '2024-12-30', 'Emergency', 'Angina', 8000.00, 0),
+(37, 6, 2, '2025-01-05', '2025-01-08', 'Elective', 'Tonsillectomy', 4200.00, 0),
+(38, 7, 1, '2025-01-10', '2025-01-11', 'OPD', 'Arthritis Consultation', 450.00, 0),
+(39, 8, 3, '2025-01-15', '2025-01-16', 'Emergency', 'Dislocated Shoulder', 2800.00, 0),
+(40, 9, 5, '2025-01-20', '2025-01-22', 'OPD', 'Chronic Fatigue', 900.00, 0);
+
+
+
+SELECT * FROM Patients;
+
+SELECT * FROM Doctors;
+
+SELECT * FROM Admissions;
+
+
+
+
+1 = SELECT PatientName, City, InsuranceType FROM Patients WHERE Gender = 'Female' AND RegistrationDate > '2024-01-01' ORDER BY RegistrationDate DESC;
+
+2=SELECT PatientID,SUM( TreatmentCost) AS TotalTreatmentCost,COUNT(AdmissionID) AS TotalAdmission FROM  Admissions GROUP BY PatientID HAVING SUM( TreatmentCost) > 3000;
+
+3=SELECT PatientName,City FROM  Patients WHERE PatientID NOT IN (SELECT PatientID FROM Admissions);
+
+4=SELECT P.PatientName,A.Diagnosis,SUM(A.TreatmentCost) AS TOTALTREATMENTCOST FROM  Admissions A INNER JOIN  Patients P ON P.PatientID = A.PatientID GROUP BY  P.PatientName,A.Diagnosis HAVING SUM(A.TreatmentCost) > (SELECT AVG(TreatmentCost) FROM  Admissions);|
+
+5= SELECT D.DoctorName,SUM(CASE WHEN A. AdmissionType = 'Emergency' THEN 1 ELSE 0 END) AS EmergencyAdmissions,SUM(CASE WHEN A.AdmissionType = 'Elective' THEN 1 ELSE 0 END) AS ElectiveAdmissions FROM Doctors D INNER JOIN  Admissions A ON A.DoctorID = D.DoctorID GROUP BY D.DoctorName;
+
+6=WITH TREATMENTCOST AS ( SELECT P.PatientName,SUM(A.TreatmentCost) AS TOTALTREATMENTCOST FROM  Admissions A INNER JOIN  Patients P ON P.PatientID = A.PatientID GROUP BY  P.PatientName) SELECT PatientName,TOTALTREATMENTCOST FROM TREATMENTCOST WHERE TOTALTREATMENTCOST > (SELECT AVG(TOTALTREATMENTCOST) FROM TREATMENTCOST);
+
+7= WITH RECENTDATE AS (SELECT P.PatientName,A.Diagnosis,A.AdmissionDate,DENSE_RANK() OVER(PARTITION BY P.PatientName ORDER BY A.AdmissionDate DESC) AS RANKING FROM  Admissions A INNER JOIN  Patients P ON P.PatientID = A.PatientID) SELECT PatientName, Diagnosis,AdmissionDate FROM  RECENTDATE WHERE RANKING = 1;
+
+8= SELECT PatientID,AdmissionDate,LAG(AdmissionDate) OVER(PARTITION BY PatientID) AS PREVADMISIONDATE FROM  Admissions;
+
+9=WITH DOCTORRAN AS ( SELECT D. DoctorName,D.Department,SUM(A.TreatmentCost) AS TotalTreatmentCost,DENSE_RANK() OVER(PARTITION BY D.Department  ORDER BY SUM(A.TreatmentCost) DESC) AS RANKING  FROM  Admissions A INNER JOIN Doctors D ON D.DoctorID = A.DoctorID GROUP BY D. DoctorName,D.Department) SELECT * FROM  DOCTORRAN WHERE RANKING = 1;
+
+10=SELECT COALESCE(P.InsuranceType,'Uninsured') AS INSURANCETYPE,ROUND(AVG(A.TreatmentCost),2) AS AVGTREATMENTCOST FROM  Admissions A INNER JOIN  Patients P ON P.PatientID = A.PatientID GROUP BY  COALESCE(P.InsuranceType,'Uninsured') ORDER BY AVGTREATMENTCOST DESC;
+
+11=SELECT (SUM(CASE WHEN ReadmittedWithin30Days =  1 THEN  1 ELSE 0 END)*100 /COUNT(*)) AS RATE FROM Admissions;
+
+12=SELECT P.PatientName,COUNT( DISTINCT A.DoctorID) AS UniqueDoctorCount FROM Admissions A INNER JOIN  Patients P ON P.PatientID = A.PatientID GROUP BY  P.PatientName HAVING COUNT( DISTINCT A.DoctorID) > 1;
+
+13=SELECT D.DoctorName,COALESCE(COUNT(A.AdmissionID),0) AS TOTALADMISSION  FROM  Admissions A RIGHT JOIN Doctors D ON D.DoctorID = A.DoctorID GROUP BY D.DoctorName ORDER BY TOTALADMISSION DESC;
+
+14=WITH DRCOST AS (SELECT D.DoctorName,SUM(A.TreatmentCost) AS DoctorTotalCost,D.Department FROM Admissions A INNER JOIN Doctors D ON D.DoctorID = A.DoctorID GROUP BY   D.DoctorName,D.Department) SELECT DoctorName ,DoctorTotalCost,Department FROM DRCOST WHERE DoctorTotalCost > (SELECT AVG(DoctorTotalCost) FROM DRCOST);
+
+
+
+
+**1.** Write a SQL query to retrieve the `PatientName`, `City`, and `InsuranceType` of all female patients who registered after January 1, 2024. Please order the results so that the most recently registered patients appear at the top.
+
+**2.** Write a query to calculate the total number of admissions and the total treatment cost for each patient. Display the `PatientID`, the total number of admissions, and the total treatment cost. Only include patients whose total combined treatment cost is strictly greater than $3000.
+
+**3.** Write a SQL query to return the `PatientName` and `City` of all patients who have NEVER had an admission.
+
+**4.** Write a SQL query to retrieve the `PatientName`, `Diagnosis`, and `TreatmentCost` for all admissions where the `TreatmentCost` is strictly greater than the overall average `TreatmentCost` across *all* admissions in the database.
+
+**5.** Write a SQL query to return the `DoctorName` and two calculated columns: `EmergencyAdmissions` (the total number of 'Emergency' admissions) and `ElectiveAdmissions` (the total number of 'Elective' admissions). Only include doctors who have had at least one admission.
+
+**6.** Write a SQL query using a CTE to find patients whose total personal treatment cost is higher than the average total cost per patient. Create a CTE that calculates the total treatment cost for each patient, then use it to select the patient name and total cost for those exceeding the overall average total cost.
+
+**7.** Write a SQL query to return the `PatientName`, `AdmissionDate`, and `Diagnosis` of the MOST RECENT admission for each patient. You must use a Window Function.
+
+**8.** Write a SQL query to return the `PatientID`, the current `AdmissionDate`, and the date of that exact same patient's *previous* admission (`PreviousAdmissionDate`).
+
+**9.** Write a SQL query to return the `Department`, `DoctorName`, and their total `TreatmentCost`, but ONLY return the #1 highest-billing doctor for each department.
+
+**10.** Write a SQL query to calculate the average `TreatmentCost` for each `InsuranceType`. If a patient has no insurance, replace the NULL value with the string 'Uninsured'. Round the average cost to two decimal places and order the results from highest to lowest.
+
+**11.** Write a SQL query to calculate the overall hospital readmission rate as a percentage: (Total number of readmissions / Total number of admissions) * 100.
+
+**12.** Write a SQL query to return the `PatientName` and the number of unique doctors they have seen (alias as `UniqueDoctorCount`). Only include patients who have been treated by more than one distinct doctor.
+
+**13.** Write a SQL query to return the `DoctorName` and their total number of admissions (`TotalAdmissions`). Include ALL doctors in the database, even if they have 0 admissions, and order the results from the most admissions to the fewest.
+
+**14.** Write a SQL query to return the `DoctorName`, `Department`, and their personal total `TreatmentCost` (`DoctorTotalCost`). Filter the results to ONLY include doctors whose total cost is strictly greater than the average total cost per doctor across the entire hospital.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
